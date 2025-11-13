@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\EventsController;
+use App\Http\Controllers\Admin\GalleryCategoryController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Artisan;
@@ -52,6 +53,7 @@ Route::namespace('App\Http\Controllers')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::resource('news', NewsController::class);
         Route::resource('events', EventsController::class);
+        Route::resource('galleryCategory', GalleryCategoryController::class);
         Route::resource('volunteer', VolunteerController::class);
     });
 });
