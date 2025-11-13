@@ -6,11 +6,13 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\EventsController;
 use App\Http\Controllers\Admin\GalleryCategoryController;
+use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\SurveyController;
 use App\Http\Controllers\Admin\VolunteerController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +56,7 @@ Route::namespace('App\Http\Controllers')->group(function () {
         Route::resource('news', NewsController::class);
         Route::resource('events', EventsController::class);
         Route::resource('galleryCategory', GalleryCategoryController::class);
+        Route::resource('gallery', GalleryController::class);
         Route::resource('volunteer', VolunteerController::class);
     });
 });

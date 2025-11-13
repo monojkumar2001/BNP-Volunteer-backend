@@ -5,7 +5,7 @@
 
         <nav class="page-breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('admin.galleryCategory.index') }}"> Gallery Category</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.gallery.index') }}"> Gallery </a></li>
                 <li class="breadcrumb-item active" aria-current="page">Edit Gallery Category</li>
             </ol>
         </nav>
@@ -14,32 +14,42 @@
             <div class="col-md-8 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h6 class="card-title">Edit Gallery Category</h6>
+                        <h6 class="card-title">Edit Gallery </h6>
 
-                        <form action="{{ route('admin.galleryCategory.update', $galleryCategory->id) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.gallery.update', $gallery->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
 
-                            <div class="row">
-                                 <div class="col-md-6">
-                                       <div class="mb-3">
-                                         <label class="form-label">Name (EN)</label>
-                                         <input type="text" name="name_en" class="form-control" value="{{ old('name_en', $galleryCategory->name_en) }}" required />
-                                     </div>
+         <div class="mb-3">
+    <label class="form-label">Gallery Category</label>
+    <select name="gallery_category_id" class="form-control" required>
+        <option value="" disabled>Select Category</option>
+        @foreach($galleryCategories as $category)
+            <option 
+                value="{{ $category->id }}" 
+                {{ (old('gallery_category_id', $gallery->gallery_category_id ?? '') == $category->id) ? 'selected' : '' }}
+            >
+                {{ $category->name_en }}
+            </option>
+        @endforeach
+    </select>
+</div>
 
-                                </div>
-                                <div class="col-md-6">
+
                                  <div class="mb-3">
-                                <label class="form-label">Name (BN)</label>
-                                <input type="text" name="name_bn" class="form-control" value="{{ old('name_bn', $galleryCategory->name_bn) }}" />
+                                <label class="form-label">Gallery Image</label>
+                                @if ($gallery->image)
+                                    <div class="mb-2"><img src="{{ asset($gallery->image) }}" style="height:80px;" alt="img" /></div>
+                                @endif
+                                <input type="file" name="image" class="form-control" />
                             </div>
-                                </div>
+
 
                             <div class="mb-3">
                                 <label class="form-label">Status</label>
                                 <select name="status" class="form-control">
-                                    <option value="1" {{ $galleryCategory->status ? 'selected' : '' }}>Active</option>
-                                    <option value="0" {{ !$galleryCategory->status ? 'selected' : '' }}>Inactive</option>
+                                    <option value="1" {{ $gallery->status ? 'selected' : '' }}>Active</option>
+                                    <option value="0" {{ !$gallery->status ? 'selected' : '' }}>Inactive</option>
                                 </select>
                             </div>
 

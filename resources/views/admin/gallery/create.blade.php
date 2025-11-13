@@ -5,8 +5,8 @@
 
         <nav class="page-breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('admin.galleryCategory.index') }}">Gallery Category</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Create News</li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.gallery.index') }}">Gallery</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Create Gallery </li>
             </ol>
         </nav>
 
@@ -14,31 +14,28 @@
             <div class="col-md-8 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h6 class="card-title">Create Gallery Category</h6>
+                        <h6 class="card-title">Create Gallery</h6>
 
-                        <form action="{{ route('admin.galleryCategory.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.gallery.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
-                       <div class="row">
-                            <div class="col-md-6">
-                                    <div class="mb-3">
-                                    <label class="form-label">Name (EN)</label>
-                                    <input type="text" name="name_en" class="form-control" value="{{ old('name_en') }}" required />
-                                </div>
+                       <div class="mb-3">
+    <label class="form-label">Gallery Category</label>
+    <select name="gallery_category_id" class="form-control" required>
+        <option value="" disabled selected>Select Category</option>
+        @foreach($galleryCategories as $category)
+            <option value="{{ $category->id }}" {{ old('gallery_category_id') == $category->id ? 'selected' : '' }}>
+                {{ $category->name_en }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+                         <div class="mb-3">
+                                <label class="form-label"> Gallery Image</label>
+                                <input type="file" name="image" class="form-control" />
                             </div>
-                            <div class="col-md-6">
-                             <div class="mb-3">
-                                <label class="form-label">Name (BN)</label>
-                                <input type="text" name="name_bn" class="form-control" value="{{ old('name_bn') }}" />
-                            </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="mb-3">
-                                <label class="form-label">Slug</label>
-                                <input type="text" name="slug" class="form-control" value="{{ old('slug') }}" required />
-                                </div>
-                            </div>
-                       </div>
+
                             <div class="mb-3">
                                 <label class="form-label">Status</label>
                                 <select name="status" class="form-control">
