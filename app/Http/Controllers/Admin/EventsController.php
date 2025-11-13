@@ -86,24 +86,24 @@ class EventsController extends Controller
     }
 
     /** Show the form for editing the specified event */
-    public function edit(Events $event)
+    public function edit($id)
     {
+        $event = Events::findOrFail($id);
         return view('admin.event.edit', compact('event'));
     }
 
-    /** Update the specified event in storage */
-    public function update(Request $request, Events $event)
+    public function update(Request $request, $id)
     {
+
         $validated = $request->validate([
             'title_en' => 'required|string|max:255',
             'title_bn' => 'nullable|string|max:255',
-            'slug' => 'required|string|max:255|unique:events,slug,' . $event->id,
             'short_description_en' => 'nullable|string',
             'short_description_bn' => 'nullable|string',
             'description_en' => 'nullable|string',
             'description_bn' => 'nullable|string',
-            'event_date' => 'nullable|date',
-            'event_time' => 'nullable|date_format:H:i',
+            'event_date' => 'nullable',
+            'event_time' => 'nullable',
             'location_en' => 'nullable|string|max:255',
             'location_bn' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
@@ -111,7 +111,11 @@ class EventsController extends Controller
             'status' => 'nullable|boolean',
         ]);
 
-        // ✅ Handle image upload/replacement
+
+        $event = Events::findOrFail($id);
+
+
+        // ✅ Prepare update data
         $updateData = [
             'title_en' => $validated['title_en'],
             'title_bn' => $validated['title_bn'] ?? null,
@@ -124,37 +128,27 @@ class EventsController extends Controller
             'location_en' => $validated['location_en'] ?? null,
             'location_bn' => $validated['location_bn'] ?? null,
             'video_url' => $validated['video_url'] ?? null,
-            'status' => $validated['status'] ? true : false,
+            'status' => isset($validated['status']) ? (bool) $validated['status'] : false,
         ];
 
-        // Handle slug
-        $slug = $validated['slug'];
-        if ($slug !== $event->slug) {
-            // Only check unique if slug changed
-            $existingSlug = Events::where('slug', $slug)->where('id', '!=', $event->id)->exists();
-            if ($existingSlug) {
-                $slug = $this->makeUniqueSlug($slug, $event->id);
-            }
-        }
-        $updateData['slug'] = $slug;
-
-        // Handle image - only update if new image uploaded
+        // ✅ Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($event->image && File::exists(public_path($event->image))) {
-                File::delete(public_path($event->image));
+            if ($event->image && \File::exists(public_path($event->image))) {
+                \File::delete(public_path($event->image));
             }
-            // Upload new image
+
             $updateData['image'] = $this->handleImageUpload($request->file('image'));
         }
-        // If no new image, don't update the image field at all
 
+        // ✅ Update the event
         $event->update($updateData);
 
         return redirect()
             ->route('admin.events.index')
             ->with('success', 'Event updated successfully.');
     }
+
+
 
     /** Remove the specified event from storage */
     public function destroy(Events $event)

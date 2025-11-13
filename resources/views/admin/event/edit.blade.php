@@ -34,12 +34,7 @@
                                 <input type="text" name="title_bn" class="form-control" value="{{ old('title_bn', $event->title_bn) }}" />
                             </div>
                                 </div>
-                                <div class="col-md-12">
-    <div class="mb-3">
-                                <label class="form-label">Slug</label>
-                                <input type="text" name="slug" class="form-control" value="{{ old('slug', $event->slug) }}" required />
-                            </div>
-                                </div>
+                                
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Event Date</label>
