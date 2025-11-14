@@ -19,4 +19,8 @@ class News extends Model
         'image',
         'status',
     ];
+    public function getImageUrlAttribute()
+    {
+        return url('uploads/news/' . $this->image);
+    }
 }

@@ -43,8 +43,6 @@ class NewsController extends Controller
             'title_en' => 'required|string|max:255',
             'title_bn' => 'nullable|string|max:255',
             'slug' => 'nullable|string|max:255|unique:news,slug',
-            'short_description_en' => 'nullable|string',
-            'short_description_bn' => 'nullable|string',
             'content_en' => 'nullable|string',
             'content_bn' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
@@ -64,8 +62,6 @@ class NewsController extends Controller
             'title_en' => $validated['title_en'],
             'title_bn' => $validated['title_bn'] ?? null,
             'slug' => $slug,
-            'short_description_en' => $validated['short_description_en'] ?? null,
-            'short_description_bn' => $validated['short_description_bn'] ?? null,
             'content_en' => $validated['content_en'] ?? null,
             'content_bn' => $validated['content_bn'] ?? null,
             'image' => $imagePath,
@@ -109,9 +105,7 @@ class NewsController extends Controller
         $validated = $request->validate([
             'title_en' => 'required|string|max:255',
             'title_bn' => 'nullable|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:news,slug,' . $news->id,
-            'short_description_en' => 'nullable|string',
-            'short_description_bn' => 'nullable|string',
+
             'content_en' => 'nullable|string',
             'content_bn' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
@@ -125,14 +119,10 @@ class NewsController extends Controller
             }
             $validated['image'] = $this->handleImageUpload($request->file('image'));
         }
-        // ensure slug
-        $slug = $validated['slug'] ?? Str::slug($validated['title_en']);
-        $slug = $this->makeUniqueSlug($slug, $news->id);
 
         $news->update([
             'title_en' => $validated['title_en'],
             'title_bn' => $validated['title_bn'] ?? null,
-            'slug' => $slug,
             'short_description_en' => $validated['short_description_en'] ?? null,
             'short_description_bn' => $validated['short_description_bn'] ?? null,
             'content_en' => $validated['content_en'] ?? null,

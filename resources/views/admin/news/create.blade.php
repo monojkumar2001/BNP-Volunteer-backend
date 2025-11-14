@@ -46,15 +46,7 @@
 
                           
 
-                            <div class="mb-3">
-                                <label class="form-label">Short Description (EN)</label>
-                                <textarea name="short_description_en" class="form-control">{{ old('short_description_en') }}</textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Short Description (BN)</label>
-                                <textarea name="short_description_bn" class="form-control">{{ old('short_description_bn') }}</textarea>
-                            </div>
+                      
 
                             <div class="mb-3">
                                 <label class="form-label">Description (EN)</label>

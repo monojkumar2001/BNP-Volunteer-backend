@@ -34,29 +34,6 @@
                                 <input type="text" name="title_bn" class="form-control" value="{{ old('title_bn', $news->title_bn) }}" />
                             </div>
                                 </div>
-                                <div class="col-md-12">
-    <div class="mb-3">
-                                <label class="form-label">Slug</label>
-                                <input type="text" name="slug" class="form-control" value="{{ old('slug', $news->slug) }}" required />
-                            </div>
-                                </div>
-                               
-                         
-
-                          
-
-                        
-
-                            <div class="mb-3">
-                                <label class="form-label">Short Description (EN)</label>
-                                <textarea name="short_description_en" class="form-control">{{ old('short_description_en', $news->short_description_en) }}</textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Short Description (BN)</label>
-                                <textarea name="short_description_bn" class="form-control">{{ old('short_description_bn', $news->short_description_bn) }}</textarea>
-                            </div>
-
                             <div class="mb-3">
                                 <label class="form-label">Description (EN)</label>
                                 <textarea name="content_en" class="form-control" id="easyMdeExample" rows="5" >{{ old('content_en', $news->content_en) }}</textarea>
