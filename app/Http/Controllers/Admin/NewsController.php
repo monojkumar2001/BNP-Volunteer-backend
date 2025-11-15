@@ -58,6 +58,14 @@ class NewsController extends Controller
         $slug = $validated['slug'] ?? Str::slug($validated['title_en']);
         $slug = $this->makeUniqueSlug($slug);
 
+        // Decode any HTML entities to avoid storing escaped tags
+        if (!empty($validated['content_en'])) {
+            $validated['content_en'] = html_entity_decode($validated['content_en'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+        if (!empty($validated['content_bn'])) {
+            $validated['content_bn'] = html_entity_decode($validated['content_bn'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+
         $news = News::create([
             'title_en' => $validated['title_en'],
             'title_bn' => $validated['title_bn'] ?? null,
@@ -118,6 +126,14 @@ class NewsController extends Controller
                 @unlink(public_path($news->image));
             }
             $validated['image'] = $this->handleImageUpload($request->file('image'));
+        }
+
+        // Decode content if it's present to avoid double-encoded HTML
+        if (!empty($validated['content_en'])) {
+            $validated['content_en'] = html_entity_decode($validated['content_en'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+        if (!empty($validated['content_bn'])) {
+            $validated['content_bn'] = html_entity_decode($validated['content_bn'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
         }
 
         $news->update([
@@ -247,5 +263,31 @@ class NewsController extends Controller
             $slug = $original . '-' . $i;
             $i++;
         }
+    }
+
+
+
+    public function uploadImage(Request $request)
+    {
+        if ($request->hasFile('upload')) {
+
+            $file = $request->file('upload');
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $folder = public_path('uploads/news');
+            if (!is_dir($folder)) {
+                mkdir($folder, 0777, true);
+            }
+
+            $file->move($folder, $filename);
+
+            return response()->json([
+                'uploaded' => 1,
+                'fileName' => $filename,
+                'url' => asset('uploads/news/' . $filename)
+            ]);
+        }
+
+        return response()->json(['uploaded' => 0]);
     }
 }

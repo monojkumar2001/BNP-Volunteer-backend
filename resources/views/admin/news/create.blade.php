@@ -55,7 +55,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Description (BN)</label>
-                                <textarea name="content_bn" class="form-control"id="easyMdeExample2" rows="5">{{ old('content_bn') }}</textarea>
+                                <textarea name="content_bn" class="form-control" id="easyMdeExample2" rows="5">{{ old('content_bn') }}</textarea>
                             </div>
 
                             <div class="mb-3">
@@ -113,4 +113,5 @@
             });
         })();
     </script>
+
 @endsection

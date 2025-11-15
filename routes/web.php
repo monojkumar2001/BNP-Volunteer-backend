@@ -58,6 +58,8 @@ Route::namespace('App\Http\Controllers')->group(function () {
         Route::resource('galleryCategory', GalleryCategoryController::class);
         Route::resource('gallery', GalleryController::class);
         Route::resource('volunteer', VolunteerController::class);
+        Route::post('/upload-news-image', [NewsController::class, 'uploadImage'])
+            ->name('news.upload.image');
     });
 });
 
@@ -70,3 +72,5 @@ Route::namespace('App\Http\Controllers')->group(
     }
 );
 // ================================user AND ROUTE END=============
+Route::post('/upload-news-image', [NewsController::class, 'uploadImage'])
+    ->name('news.upload.image');
