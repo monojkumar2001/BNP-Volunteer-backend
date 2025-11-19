@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\ContactUsController;
+use App\Http\Controllers\Api\EventsController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VolunteerController;
@@ -29,4 +30,6 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/volunteer', [VolunteerController::class, 'store']);
 Route::get('/news', [NewsController::class, 'index']);
 Route::get('/news/{slug}', [NewsController::class, 'singleNews']);
+Route::get('/events', [EventsController::class, 'index']);
+Route::get('/event/{slug}', [EventsController::class, 'singleEvents']);
 Route::post('/contact', [ContactUsController::class, 'store']);

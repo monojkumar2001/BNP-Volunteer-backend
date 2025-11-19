@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\News;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Intervention\Image\Facades\Image;
+
 
 class NewsController extends Controller
 {
