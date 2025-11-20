@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\EventsController;
 use App\Http\Controllers\Api\NewsController;
+use App\Http\Controllers\Api\OpinionController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VolunteerController;
 
@@ -33,3 +34,4 @@ Route::get('/news/{slug}', [NewsController::class, 'singleNews']);
 Route::get('/events', [EventsController::class, 'index']);
 Route::get('/event/{slug}', [EventsController::class, 'singleEvents']);
 Route::post('/contact', [ContactUsController::class, 'store']);
+Route::post('/opinion', [OpinionController::class, 'store']);

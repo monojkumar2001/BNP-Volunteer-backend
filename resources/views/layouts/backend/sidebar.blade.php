@@ -26,6 +26,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href={{ route('admin.opinion.index') }} class="nav-link">
+                    <i class="link-icon" data-feather="message-square"></i>
+                    <span class="link-title">Opinions & Complaints</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href={{ route('admin.events.index') }} class="nav-link">
                     <i class="link-icon" data-feather="box"></i>
                     <span class="link-title">Events</span>
