@@ -33,7 +33,7 @@ Route::post('/volunteer', [VolunteerController::class, 'store']);
 Route::get('/news', [NewsController::class, 'index']);
 Route::get('/news/{slug}', [NewsController::class, 'singleNews']);
 Route::get('/events', [EventsController::class, 'index']);
-Route::get('/event/{slug}', [EventsController::class, 'singleEvents']);
+Route::get('/event/{slug}', [EventsController::class, 'singleEvent']);
 Route::get('/gallery', [GalleryController::class, 'index']);
 Route::get('/gallery/category/{slug}', [GalleryController::class, 'getByCategory']);
 Route::post('/contact', [ContactUsController::class, 'store']);

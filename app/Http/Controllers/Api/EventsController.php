@@ -14,13 +14,13 @@ class EventsController extends Controller
         $events = Events::latest()->get();
         return response()->json($events, 200);
     }
-    public function singleNews($slug)
+    public function singleEvent($slug)
     {
         $event = Events::where('slug', $slug)->first();
 
         if (!$event) {
             return response()->json([
-                'message' => 'events not found'
+                'message' => 'Event not found'
             ], 404);
         }
 
