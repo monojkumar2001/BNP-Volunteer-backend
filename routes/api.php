@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\EventsController;
 use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\OpinionController;
+use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VolunteerController;
 
@@ -36,5 +37,6 @@ Route::get('/events', [EventsController::class, 'index']);
 Route::get('/event/{slug}', [EventsController::class, 'singleEvent']);
 Route::get('/gallery', [GalleryController::class, 'index']);
 Route::get('/gallery/category/{slug}', [GalleryController::class, 'getByCategory']);
+Route::get('/search', [SearchController::class, 'search']);
 Route::post('/contact', [ContactUsController::class, 'store']);
 Route::post('/opinion', [OpinionController::class, 'store']);
