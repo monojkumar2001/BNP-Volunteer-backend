@@ -40,16 +40,21 @@ class ContactUsController extends Controller
         $contactUs->update([
             'status' => request('status'),
         ]);
+
+        return redirect()->route('admin.contact_us.index')->with('success', 'Contact status updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ContactUs  $contactUs
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ContactUs $contactUs)
+    public function destroy($id)
     {
-        //
+        $contactUs = ContactUs::findOrFail($id);
+        $contactUs->delete();
+
+        return redirect()->route('admin.contact_us.index')->with('success', 'Contact deleted successfully!');
     }
 }

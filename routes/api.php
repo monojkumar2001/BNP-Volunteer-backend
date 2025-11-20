@@ -38,5 +38,7 @@ Route::get('/event/{slug}', [EventsController::class, 'singleEvent']);
 Route::get('/gallery', [GalleryController::class, 'index']);
 Route::get('/gallery/category/{slug}', [GalleryController::class, 'getByCategory']);
 Route::get('/search', [SearchController::class, 'search']);
+Route::get('/contacts', [ContactUsController::class, 'index']);
+Route::get('/contact/{id}', [ContactUsController::class, 'show']);
 Route::post('/contact', [ContactUsController::class, 'store']);
 Route::post('/opinion', [OpinionController::class, 'store']);

@@ -1,7 +1,8 @@
 <nav class="sidebar">
     <div class="sidebar-header">
-        <a href="#" class="sidebar-brand">
-           <img src="{{ asset("assets/logo/logo.png") }}" alt="">
+        <a href="#" style="display: flex; align-items: center; gap: 10px;" class="sidebar-brand">
+           <img style="width: 45px; height: 45px;" src="{{ asset("assets/logo/logo.webp") }}" alt="">
+           <p style="font-size: 14px; font-weight: 600; color: #FFF;">Zawshad Zamir</p>
         </a>
         <div class="sidebar-toggler not-active">
             <span></span>
@@ -29,6 +30,12 @@
                 <a href={{ route('admin.opinion.index') }} class="nav-link">
                     <i class="link-icon" data-feather="message-square"></i>
                     <span class="link-title">Opinions & Complaints</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href={{ route('admin.contact_us.index') }} class="nav-link">
+                    <i class="link-icon" data-feather="mail"></i>
+                    <span class="link-title">Contact Us</span>
                 </a>
             </li>
             <li class="nav-item">

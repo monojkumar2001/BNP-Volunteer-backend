@@ -1,89 +1,108 @@
 @extends('master.master')
 
+@php
+    use Illuminate\Support\Str;
+@endphp
+
 @section('content')
     <div class="page-content">
-
         <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
             <div>
-                <h4 class="mb-3 mb-md-0">Welcome {{ Auth::user()->name }}</h4>
+                <h4 class="mb-1">Welcome back, {{ Auth::user()->name }}</h4>
+                <p class="text-muted mb-0">Here is the real-time snapshot of the entire platform.</p>
             </div>
-
+            <div class="d-flex align-items-center gap-2 mt-3 mt-md-0">
+                <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-2">
+                    Updated {{ now()->format('d M, h:i A') }}
+                </span>
+                <a href="{{ route('admin.contact_us.index') }}" class="btn btn-primary btn-icon-text">
+                    <i data-feather="mail" class="btn-icon-prepend"></i>
+                    View Contacts
+                </a>
+            </div>
         </div>
 
+        {{-- Top Stats --}}
         <div class="row">
-            <div class="col-12 col-xl-12 stretch-card">
-                <div class="row flex-grow-1">
-                    <div class="col-md-4 grid-margin stretch-card">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <h6 class="card-title mb-0">Total Surveys</h6>
+            @php
+                $cards = [
+                    [
+                        'label' => 'Total Users',
+                        'value' => number_format($totalUsers),
+                        'sub' => $newUsersCount . ' new today',
+                        'subClass' => 'text-success',
+                        'icon' => 'users',
+                        'bg' => 'bg-primary-subtle text-primary',
+                    ],
+                    [
+                        'label' => 'News & Events',
+                        'value' => number_format($totalNews + $totalEvents),
+                        'sub' => $publishedNews . ' news / ' . $upcomingEvents . ' upcoming events',
+                        'subClass' => 'text-muted',
+                        'icon' => 'calendar',
+                        'bg' => 'bg-warning-subtle text-warning',
+                    ],
+                    [
+                        'label' => 'Volunteers',
+                        'value' => number_format($totalVolunteers),
+                        'sub' => $pendingVolunteers . ' pending',
+                        'subClass' => 'text-warning',
+                        'icon' => 'heart',
+                        'bg' => 'bg-secondary-subtle text-secondary',
+                    ],
+                    [
+                        'label' => 'Opinions & Complaints',
+                        'value' => number_format($totalOpinions),
+                        'sub' => $unreadOpinions . ' unread',
+                        'subClass' => $unreadOpinions ? 'text-danger' : 'text-success',
+                        'icon' => 'message-square',
+                        'bg' => 'bg-danger-subtle text-danger',
+                    ],
+                    [
+                        'label' => 'Contact Messages',
+                        'value' => number_format($totalContacts),
+                        'sub' => $unreadContacts . ' unread',
+                        'subClass' => $unreadContacts ? 'text-danger' : 'text-success',
+                        'icon' => 'mail',
+                        'bg' => 'bg-primary-subtle text-primary',
+                    ],
+                    [
+                        'label' => 'Active Items',
+                        'value' => number_format($upcomingEvents + $publishedNews),
+                        'sub' => 'Active events & news',
+                        'subClass' => 'text-muted',
+                        'icon' => 'zap',
+                        'bg' => 'bg-info-subtle text-info',
+                    ],
+                ];
+            @endphp
 
+            @foreach ($cards as $card)
+                <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted">{{ $card['label'] }}</h6>
+                                    <h3 class="mt-2 mb-0">{{ $card['value'] }}</h3>
+                                    <small class="{{ $card['subClass'] }}">{{ $card['sub'] }}</small>
                                 </div>
-                                <div class="row">
-                                    <div class="col-6 col-md-12 col-xl-5">
-
-                                    </div>
-                                    <div class="col-6 col-md-12 col-xl-7">
-                                        <div id="customersChart" class="mt-md-3 mt-xl-0"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 grid-margin stretch-card">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <h6 class="card-title mb-0">Total Survey Submit</h6>
-
-                                </div>
-                                <div class="row">
-                                    <div class="col-6 col-md-12 col-xl-5">
-
-                                    </div>
-                                    <div class="col-6 col-md-12 col-xl-7">
-                                        <div id="ordersChart" class="mt-md-3 mt-xl-0"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 grid-margin stretch-card">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <h6 class="card-title mb-0">Total Visitors</h6>
-
-                                </div>
-                                <div class="row">
-                                    <div class="col-6 col-md-12 col-xl-5">
-                                        <h3 class="mb-2">89.87%</h3>
-                                        <div class="d-flex align-items-baseline">
-                                            <p class="text-success">
-                                                <span>+2.8%</span>
-                                                <i data-feather="arrow-up" class="icon-sm mb-1"></i>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-12 col-xl-7">
-                                        <div id="growthChart" class="mt-md-3 mt-xl-0"></div>
-                                    </div>
+                                <div class="icon-md rounded {{ $card['bg'] }} d-flex align-items-center justify-content-center">
+                                    <i data-feather="{{ $card['icon'] }}"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div> <!-- row -->
+            @endforeach
+        </div>
 
-
-
+        {{-- Charts --}}
         <div class="row">
             <div class="col-lg-6 col-xl-6 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h6 class="card-title">Age Chart</h6>
+                        <h6 class="card-title">Age Distribution</h6>
                         <div id="ageChart"></div>
                     </div>
                 </div>
@@ -91,36 +110,161 @@
             <div class="col-lg-6 col-xl-6 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h6 class="card-title">Gender chart</h6>
+                        <h6 class="card-title">Gender Distribution</h6>
                         <div id="GenderChart"></div>
                     </div>
                 </div>
             </div>
-
             <div class="col-lg-6 col-xl-6 grid-margin stretch-card">
                 <div class="card">
-                    <div class="card-header font-semibold">Occupation Chart</div>
+                    <div class="card-header fw-semibold">Top Occupations</div>
                     <div class="card-body">
                         <div id="occupationChart"></div>
                     </div>
                 </div>
             </div>
-
             <div class="col-lg-6 col-xl-6 grid-margin stretch-card">
                 <div class="card">
-                    <div class="card-header font-semibold">Marital Status Chart</div>
+                    <div class="card-header fw-semibold">Marital Status</div>
                     <div class="card-body">
                         <div id="maritalStatusChart"></div>
                     </div>
                 </div>
             </div>
+        </div>
 
+        {{-- Latest data tables --}}
+        <div class="row">
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="card-title mb-0">Latest Contact Messages</h6>
+                            <a href="{{ route('admin.contact_us.index') }}" class="text-primary small">View all</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($latestContacts as $contact)
+                                        <tr>
+                                            <td>{{ $contact->name ?? 'N/A' }}</td>
+                                            <td>{{ Str::limit($contact->subject ?? 'N/A', 30) }}</td>
+                                            <td>
+                                                <span class="badge px-2 {{ $contact->status ? 'bg-success' : 'bg-warning text-dark' }}">
+                                                    {{ $contact->status ? 'Read' : 'Unread' }}
+                                                </span>
+                                            </td>
+                                            <td>{{ $contact->created_at->format('d M, h:i A') }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">No contact messages yet.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        </div> <!-- row -->
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="card-title mb-0">Latest Opinions & Complaints</h6>
+                            <a href="{{ route('admin.opinion.index') }}" class="text-primary small">View all</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($latestOpinions as $opinion)
+                                        <tr>
+                                            <td>{{ $opinion->name ?? 'Anonymous' }}</td>
+                                            <td>{{ $opinion->category ?? 'N/A' }}</td>
+                                            <td>
+                                                <span class="badge px-2 {{ $opinion->status ? 'bg-success' : 'bg-warning text-dark' }}">
+                                                    {{ $opinion->status ? 'Read' : 'Unread' }}
+                                                </span>
+                                            </td>
+                                            <td>{{ $opinion->created_at->format('d M, h:i A') }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">No opinions yet.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="card-title mb-0">Newest Volunteers</h6>
+                            <a href="{{ route('admin.volunteer.index') }}" class="text-primary small">View all</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($latestVolunteers as $volunteer)
+                                        <tr>
+                                            <td>{{ $volunteer->name }}</td>
+                                            <td>{{ $volunteer->phone }}</td>
+                                            <td>
+                                                <span class="badge px-2 {{ $volunteer->status ? 'bg-success' : 'bg-warning text-dark' }}">
+                                                    {{ $volunteer->status ? 'Approved' : 'Pending' }}
+                                                </span>
+                                            </td>
+                                            <td>{{ $volunteer->created_at->format('d M, h:i A') }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">No volunteers yet.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
 
     </div>
 @endsection
-{{-- 
+
 @section('js')
     <script>
         const ageData = {!! json_encode($ageData) !!};
@@ -149,9 +293,6 @@
             }
 
             var fontFamily = "'Roboto', Helvetica, sans-serif"
-
-
-
 
             // Age Chart (Donut)
             if ($('#ageChart').length) {
@@ -195,12 +336,6 @@
                 chart.render();
             }
 
-
-
-
-
-
-
             // Gender Chart (Pie)
             if ($('#GenderChart').length) {
                 const genderLabels = Object.keys(genderData);
@@ -243,8 +378,6 @@
                 chart.render();
             }
 
-
-
             // Occupation Chart (Bar)
             if ($('#occupationChart').length) {
                 const labels = Object.keys(occupationData);
@@ -281,7 +414,7 @@
                         colors: ['transparent']
                     },
                     series: [{
-                        name: 'Count',
+                        name: 'Respondents',
                         data: series
                     }],
                     xaxis: {
@@ -296,7 +429,6 @@
                 var chart = new ApexCharts(document.querySelector("#occupationChart"), options);
                 chart.render();
             }
-
 
             // Marital Status Chart (Pie)
             if ($('#maritalStatusChart').length) {
@@ -335,11 +467,7 @@
                 var chart = new ApexCharts(document.querySelector("#maritalStatusChart"), options);
                 chart.render();
             }
-
-
-
-
-
         });
     </script>
-@endsection --}}
+@endsection
+

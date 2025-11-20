@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\SurveyController;
 use App\Http\Controllers\Admin\VolunteerController;
 use App\Http\Controllers\Admin\OpinionController;
+use App\Http\Controllers\Admin\ContactUsController;
 
 
 /*
@@ -60,6 +61,7 @@ Route::namespace('App\Http\Controllers')->group(function () {
         Route::resource('gallery', GalleryController::class);
         Route::resource('volunteer', VolunteerController::class);
         Route::resource('opinion', OpinionController::class);
+        Route::resource('contact_us', ContactUsController::class);
         Route::post('/upload-news-image', [NewsController::class, 'uploadImage'])
             ->name('news.upload.image');
     });
