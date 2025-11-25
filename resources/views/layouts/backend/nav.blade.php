@@ -158,7 +158,7 @@
                     </div>
                 </div>
             </li> --}}
-            <li class="nav-item dropdown">
+            {{-- <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i data-feather="bell"></i>
@@ -228,16 +228,16 @@
                         <a href="javascript:;">View all</a>
                     </div>
                 </div>
-            </li>
+            </li> --}}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="wd-30 ht-30 rounded-circle" src="https://via.placeholder.com/30x30" alt="profile">
+                    <img class="wd-30 ht-30 rounded-circle" src="{{ asset("assets/logo/logo.webp") }}"alt="profile">
                 </a>
                 <div class="dropdown-menu p-0" aria-labelledby="profileDropdown">
                     <div class="d-flex flex-column align-items-center border-bottom px-5 py-3">
                         <div class="mb-3">
-                            <img class="wd-80 ht-80 rounded-circle" src="https://via.placeholder.com/80x80"
+                            <img class="wd-80 ht-80 rounded-circle" src="{{ asset("assets/logo/logo.webp") }}"
                                 alt="">
                         </div>
                         <div class="text-center">
@@ -246,7 +246,7 @@
                         </div>
                     </div>
                     <ul class="list-unstyled p-1">
-                        <li class="dropdown-item py-2">
+                        {{-- <li class="dropdown-item py-2">
                             <a href="pages/general/profile.html" class="text-body ms-0">
                                 <i class="me-2 icon-md" data-feather="user"></i>
                                 <span>Profile</span>
@@ -263,7 +263,7 @@
                                 <i class="me-2 icon-md" data-feather="repeat"></i>
                                 <span>Switch User</span>
                             </a>
-                        </li>
+                        </li> --}}
                         <li class="dropdown-item py-2">
                             <a href="{{ route('logout') }}" class="text-body ms-0"
                                 onclick="event.preventDefault();

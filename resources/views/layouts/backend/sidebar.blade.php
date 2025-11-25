@@ -2,7 +2,7 @@
     <div class="sidebar-header">
         <a href="#" style="display: flex; align-items: center; gap: 10px;" class="sidebar-brand">
            <img style="width: 45px; height: 45px;" src="{{ asset("assets/logo/logo.webp") }}" alt="">
-           <p style="font-size: 14px; font-weight: 600; color: #FFF;">Zawshad Zamir</p>
+           <p style="font-size: 14px; font-weight: 600; color: #FFF;">Nawshad Zamir</p>
         </a>
         <div class="sidebar-toggler not-active">
             <span></span>
