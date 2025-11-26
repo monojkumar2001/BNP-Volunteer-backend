@@ -81,12 +81,12 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Description (EN)</label>
-                                <textarea name="description_en" id="easyMdeExample" rows="5" class="form-control" rows="6">{{ old('description_en') }}</textarea>
+                                <textarea name="description_en" id="tinymceContentEn" rows="5" class="form-control">{{ old('description_en') }}</textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Description (BN)</label>
-                                <textarea name="description_bn" class="form-control" id="easyMdeExample2" rows="5">{{ old('description_bn') }}</textarea>
+                                <textarea name="description_bn" id="tinymceContentBn" rows="5" class="form-control">{{ old('description_bn') }}</textarea>
                             </div>
 
                             <div class="mb-3">
@@ -149,4 +149,58 @@
             });
         })();
     </script>
+@endsection 
+@section('js')
+<script src="{{ asset('assets/vendors/tinymce/tinymce.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        if (typeof tinymce !== 'undefined') {
+            tinymce.init({
+                selector: '#tinymceContentEn',
+                height: 400,
+                menubar: false,
+                plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                ],
+                toolbar: 'undo redo | blocks | ' +
+                    'bold italic underline strikethrough | fontsize fontfamily | forecolor backcolor | ' +
+                    'alignleft aligncenter alignright alignjustify | ' +
+                    'bullist numlist outdent indent | ' +
+                    'removeformat | link image table | code fullscreen | help',
+                font_size_formats: '8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 28pt 30pt 36pt 48pt 64pt',
+                font_family_formats: 'Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Comic Sans MS=comic sans ms,sans-serif;Courier New=courier new,courier;Helvetica=helvetica;Impact=impact,chicago;Lucida Grande=lucida grande;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times;Verdana=verdana,geneva',
+                content_style: 'body { font-family: Arial, sans-serif; font-size: 14px; color: #fff; background-color: #1e293b; }',
+                branding: false,
+                promotion: false
+            });
+
+            tinymce.init({
+                selector: '#tinymceContentBn',
+                height: 400,
+                menubar: false,
+                plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                ],
+                toolbar: 'undo redo | blocks | ' +
+                    'bold italic underline strikethrough | fontsize fontfamily | forecolor backcolor | ' +
+                    'alignleft aligncenter alignright alignjustify | ' +
+                    'bullist numlist outdent indent | ' +
+                    'removeformat | link image table | code fullscreen | help',
+                font_size_formats: '8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 28pt 30pt 36pt 48pt 64pt',
+                font_family_formats: 'Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Comic Sans MS=comic sans ms,sans-serif;Courier New=courier new,courier;Helvetica=helvetica;Impact=impact,chicago;Lucida Grande=lucida grande;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times;Verdana=verdana,geneva',
+                content_style: 'body { font-family: Arial, sans-serif; font-size: 14px; color: #fff; background-color: #1e293b; }',
+                branding: false,
+                promotion: false
+            });
+        } else {
+            console.error('TinyMCE is not loaded. Please check CDN link.');
+        }
+    });
+</script>
 @endsection
+
+
