@@ -43,6 +43,14 @@
                         'bg' => 'bg-warning-subtle text-warning',
                     ],
                     [
+                        'label' => 'Central BNP',
+                        'value' => number_format($totalCentralBnp),
+                        'sub' => $publishedCentralBnp . ' published',
+                        'subClass' => 'text-success',
+                        'icon' => 'file-text',
+                        'bg' => 'bg-info-subtle text-info',
+                    ],
+                    [
                         'label' => 'Volunteers',
                         'value' => number_format($totalVolunteers),
                         'sub' => $pendingVolunteers . ' pending',
@@ -68,11 +76,11 @@
                     ],
                     [
                         'label' => 'Active Items',
-                        'value' => number_format($upcomingEvents + $publishedNews),
-                        'sub' => 'Active events & news',
+                        'value' => number_format($upcomingEvents + $publishedNews + $publishedCentralBnp),
+                        'sub' => 'Active events, news & central bnp',
                         'subClass' => 'text-muted',
                         'icon' => 'zap',
-                        'bg' => 'bg-info-subtle text-info',
+                        'bg' => 'bg-success-subtle text-success',
                     ],
                 ];
             @endphp

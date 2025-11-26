@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\CentralBnpController;
 use App\Http\Controllers\Admin\EventsController;
 use App\Http\Controllers\Admin\GalleryCategoryController;
 use App\Http\Controllers\Admin\GalleryController;
@@ -56,6 +57,7 @@ Route::namespace('App\Http\Controllers')->group(function () {
     Route::group(['as' => 'admin.', 'prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'admin']], function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::resource('news', NewsController::class);
+        Route::resource('central_bnp', CentralBnpController::class);
         Route::resource('events', EventsController::class);
         Route::resource('galleryCategory', GalleryCategoryController::class);
         Route::resource('gallery', GalleryController::class);
@@ -64,6 +66,8 @@ Route::namespace('App\Http\Controllers')->group(function () {
         Route::resource('contact_us', ContactUsController::class);
         Route::post('/upload-news-image', [NewsController::class, 'uploadImage'])
             ->name('news.upload.image');
+        Route::post('/upload-central-bnp-image', [CentralBnpController::class, 'uploadImage'])
+            ->name('central_bnp.upload.image');
     });
 });
 
@@ -78,3 +82,5 @@ Route::namespace('App\Http\Controllers')->group(
 // ================================user AND ROUTE END=============
 Route::post('/upload-news-image', [NewsController::class, 'uploadImage'])
     ->name('news.upload.image');
+Route::post('/upload-central-bnp-image', [CentralBnpController::class, 'uploadImage'])
+    ->name('central_bnp.upload.image');

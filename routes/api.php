@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\EventsController;
 use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\NewsController;
+use App\Http\Controllers\Api\CentralBnpController;
 use App\Http\Controllers\Api\OpinionController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\UserController;
@@ -33,6 +34,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/volunteer', [VolunteerController::class, 'store']);
 Route::get('/news', [NewsController::class, 'index']);
 Route::get('/news/{slug}', [NewsController::class, 'singleNews']);
+Route::get('/central-bnp', [CentralBnpController::class, 'index']);
+Route::get('/central-bnp/{slug}', [CentralBnpController::class, 'singleCentralBnp']);
 Route::get('/events', [EventsController::class, 'index']);
 Route::get('/event/{slug}', [EventsController::class, 'singleEvent']);
 Route::get('/gallery', [GalleryController::class, 'index']);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CentralBnp;
 use App\Models\ContactUs;
 use App\Models\Events;
 use App\Models\News;
@@ -36,6 +37,9 @@ class DashboardController extends Controller
         $totalNews = News::count();
         $publishedNews = News::where('status', 1)->count();
 
+        $totalCentralBnp = CentralBnp::count();
+        $publishedCentralBnp = CentralBnp::where('status', 1)->count();
+
         $latestContacts = ContactUs::latest()->take(5)->get();
         $latestOpinions = Opinion::latest()->take(5)->get();
         $latestVolunteers = Volunteer::latest()->take(5)->get();
@@ -59,6 +63,8 @@ class DashboardController extends Controller
             'upcomingEvents',
             'totalNews',
             'publishedNews',
+            'totalCentralBnp',
+            'publishedCentralBnp',
             'latestContacts',
             'latestOpinions',
             'latestVolunteers',

@@ -51,6 +51,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href={{ route('admin.central_bnp.index') }} class="nav-link">
+                    <i class="link-icon" data-feather="box"></i>
+                    <span class="link-title">Central BNP</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href={{ route('admin.galleryCategory.index') }} class="nav-link">
                     <i class="link-icon" data-feather="box"></i>
                     <span class="link-title">Gallery Category</span>
