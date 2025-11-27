@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
+Route::get('/volunteer/check-phone', [VolunteerController::class, 'checkPhone']);
 Route::post('/volunteer', [VolunteerController::class, 'store']);
 Route::get('/news', [NewsController::class, 'index']);
 Route::get('/news/{slug}', [NewsController::class, 'singleNews']);
@@ -43,5 +44,7 @@ Route::get('/gallery/category/{slug}', [GalleryController::class, 'getByCategory
 Route::get('/search', [SearchController::class, 'search']);
 Route::get('/contacts', [ContactUsController::class, 'index']);
 Route::get('/contact/{id}', [ContactUsController::class, 'show']);
+Route::get('/contact/check-phone', [ContactUsController::class, 'checkPhone']);
 Route::post('/contact', [ContactUsController::class, 'store']);
+Route::get('/opinion/check-phone', [OpinionController::class, 'checkPhone']);
 Route::post('/opinion', [OpinionController::class, 'store']);
