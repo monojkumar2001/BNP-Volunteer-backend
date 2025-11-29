@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\News;
 use App\Models\Events;
 use App\Models\CentralBnp;
+use App\Http\Controllers\Api\StaticContentSearch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -23,7 +24,7 @@ class SearchController extends Controller
         $query = trim($request->get('q', ''));
         $language = $request->get('lang', 'en'); // bn or en
 
-        if (empty($query)) {
+        if (empty($query) || mb_strlen($query, 'UTF-8') < 1) {
             return response()->json([
                 'news' => [],
                 'events' => [],
@@ -33,11 +34,19 @@ class SearchController extends Controller
             ], 200);
         }
 
+        // Clean query - preserve original for display but use for search
+        $originalQuery = $query;
+        
         // Split query into words for better search
         $searchWords = preg_split('/\s+/', $query);
         $searchWords = array_filter($searchWords, function($word) {
-            return strlen(trim($word)) > 0;
+            return mb_strlen(trim($word), 'UTF-8') > 0;
         });
+        
+        // If no words after filtering, use original query
+        if (empty($searchWords)) {
+            $searchWords = [$query];
+        }
 
         // Search in News
         $news = $this->searchNews($searchWords, $query, $language);
@@ -47,11 +56,15 @@ class SearchController extends Controller
         
         // Search in Central BNP
         $centralBnp = $this->searchCentralBnp($searchWords, $query, $language);
+        
+        // Search in Static Content
+        $staticContent = StaticContentSearch::search($query, $language);
 
         // Merge all results and sort by relevance (title matches first, then by date)
         $allResults = collect($news)
             ->merge($events)
             ->merge($centralBnp)
+            ->merge($staticContent)
             ->sortByDesc(function($item) {
                 // Sort by relevance score (if exists) or created_at
                 return $item['relevance_score'] ?? strtotime($item['created_at']);
@@ -67,8 +80,9 @@ class SearchController extends Controller
             'news' => $news,
             'events' => $events,
             'central_bnp' => $centralBnp,
+            'static_content' => $staticContent,
             'all' => $allResults,
-            'total' => count($news) + count($events) + count($centralBnp),
+            'total' => count($news) + count($events) + count($centralBnp) + count($staticContent),
             'query' => $query,
         ], 200);
     }
@@ -80,21 +94,50 @@ class SearchController extends Controller
     {
         $query = News::where('status', 1);
         
-        $titleField = $language === 'bn' ? 'title_bn' : 'title_en';
-        $contentField = $language === 'bn' ? 'content_bn' : 'content_en';
-        $descField = $language === 'bn' ? 'short_description_bn' : 'short_description_en';
-
-        // Build search conditions with relevance scoring
-        $query->where(function($q) use ($searchWords, $fullQuery, $titleField, $contentField, $descField) {
-            foreach ($searchWords as $word) {
-                $searchTerm = '%' . $word . '%';
-                $q->orWhere($titleField, 'LIKE', $searchTerm)
-                  ->orWhere($contentField, 'LIKE', $searchTerm)
-                  ->orWhere($descField, 'LIKE', $searchTerm);
-            }
+        // Search in both languages for better results
+        $query->where(function($q) use ($searchWords, $fullQuery, $language) {
+            // Search in selected language fields
+            $q->where(function($langQ) use ($searchWords, $fullQuery, $language) {
+                $titleField = $language === 'bn' ? 'title_bn' : 'title_en';
+                $contentField = $language === 'bn' ? 'content_bn' : 'content_en';
+                $descField = $language === 'bn' ? 'short_description_bn' : 'short_description_en';
+                
+                // Full query match (highest priority)
+                $fullSearchTerm = '%' . $fullQuery . '%';
+                $langQ->where($titleField, 'LIKE', $fullSearchTerm)
+                      ->orWhere($contentField, 'LIKE', $fullSearchTerm)
+                      ->orWhere($descField, 'LIKE', $fullSearchTerm);
+                
+                // Individual word matches
+                foreach ($searchWords as $word) {
+                    $searchTerm = '%' . $word . '%';
+                    $langQ->orWhere($titleField, 'LIKE', $searchTerm)
+                          ->orWhere($contentField, 'LIKE', $searchTerm)
+                          ->orWhere($descField, 'LIKE', $searchTerm);
+                }
+            });
+            
+            // Also search in alternate language if current language field is empty
+            $altTitleField = $language === 'bn' ? 'title_en' : 'title_bn';
+            $altContentField = $language === 'bn' ? 'content_en' : 'content_bn';
+            $altDescField = $language === 'bn' ? 'short_description_en' : 'short_description_bn';
+            
+            $fullSearchTerm = '%' . $fullQuery . '%';
+            $q->orWhere(function($altQ) use ($searchWords, $fullQuery, $altTitleField, $altContentField, $altDescField) {
+                $altQ->where($altTitleField, 'LIKE', '%' . $fullQuery . '%')
+                     ->orWhere($altContentField, 'LIKE', '%' . $fullQuery . '%')
+                     ->orWhere($altDescField, 'LIKE', '%' . $fullQuery . '%');
+                
+                foreach ($searchWords as $word) {
+                    $searchTerm = '%' . $word . '%';
+                    $altQ->orWhere($altTitleField, 'LIKE', $searchTerm)
+                         ->orWhere($altContentField, 'LIKE', $searchTerm)
+                         ->orWhere($altDescField, 'LIKE', $searchTerm);
+                }
+            });
         });
 
-        return $query->latest()->limit(20)->get()->map(function($item) use ($language, $fullQuery, $titleField) {
+        return $query->latest()->limit(20)->get()->map(function($item) use ($language, $fullQuery) {
             $title = $language === 'bn' ? ($item->title_bn ?: $item->title_en) : ($item->title_en ?: $item->title_bn);
             $description = $language === 'bn' 
                 ? ($item->short_description_bn ?: $item->short_description_en ?: substr(strip_tags($item->content_bn ?: $item->content_en), 0, 150))
@@ -135,20 +178,52 @@ class SearchController extends Controller
     {
         $query = Events::where('status', 1);
         
-        $titleField = $language === 'bn' ? 'title_bn' : 'title_en';
-        $descField = $language === 'bn' ? 'description_bn' : 'description_en';
-        $shortDescField = $language === 'bn' ? 'short_description_bn' : 'short_description_en';
-        $locationField = $language === 'bn' ? 'location_bn' : 'location_en';
-
-        // Build search conditions
-        $query->where(function($q) use ($searchWords, $titleField, $descField, $shortDescField, $locationField) {
-            foreach ($searchWords as $word) {
-                $searchTerm = '%' . $word . '%';
-                $q->orWhere($titleField, 'LIKE', $searchTerm)
-                  ->orWhere($descField, 'LIKE', $searchTerm)
-                  ->orWhere($shortDescField, 'LIKE', $searchTerm)
-                  ->orWhere($locationField, 'LIKE', $searchTerm);
-            }
+        // Search in both languages for better results
+        $query->where(function($q) use ($searchWords, $fullQuery, $language) {
+            // Search in selected language fields
+            $q->where(function($langQ) use ($searchWords, $fullQuery, $language) {
+                $titleField = $language === 'bn' ? 'title_bn' : 'title_en';
+                $descField = $language === 'bn' ? 'description_bn' : 'description_en';
+                $shortDescField = $language === 'bn' ? 'short_description_bn' : 'short_description_en';
+                $locationField = $language === 'bn' ? 'location_bn' : 'location_en';
+                
+                // Full query match (highest priority)
+                $fullSearchTerm = '%' . $fullQuery . '%';
+                $langQ->where($titleField, 'LIKE', $fullSearchTerm)
+                      ->orWhere($descField, 'LIKE', $fullSearchTerm)
+                      ->orWhere($shortDescField, 'LIKE', $fullSearchTerm)
+                      ->orWhere($locationField, 'LIKE', $fullSearchTerm);
+                
+                // Individual word matches
+                foreach ($searchWords as $word) {
+                    $searchTerm = '%' . $word . '%';
+                    $langQ->orWhere($titleField, 'LIKE', $searchTerm)
+                          ->orWhere($descField, 'LIKE', $searchTerm)
+                          ->orWhere($shortDescField, 'LIKE', $searchTerm)
+                          ->orWhere($locationField, 'LIKE', $searchTerm);
+                }
+            });
+            
+            // Also search in alternate language
+            $altTitleField = $language === 'bn' ? 'title_en' : 'title_bn';
+            $altDescField = $language === 'bn' ? 'description_en' : 'description_bn';
+            $altShortDescField = $language === 'bn' ? 'short_description_en' : 'short_description_bn';
+            $altLocationField = $language === 'bn' ? 'location_en' : 'location_bn';
+            
+            $q->orWhere(function($altQ) use ($searchWords, $fullQuery, $altTitleField, $altDescField, $altShortDescField, $altLocationField) {
+                $altQ->where($altTitleField, 'LIKE', '%' . $fullQuery . '%')
+                     ->orWhere($altDescField, 'LIKE', '%' . $fullQuery . '%')
+                     ->orWhere($altShortDescField, 'LIKE', '%' . $fullQuery . '%')
+                     ->orWhere($altLocationField, 'LIKE', '%' . $fullQuery . '%');
+                
+                foreach ($searchWords as $word) {
+                    $searchTerm = '%' . $word . '%';
+                    $altQ->orWhere($altTitleField, 'LIKE', $searchTerm)
+                         ->orWhere($altDescField, 'LIKE', $searchTerm)
+                         ->orWhere($altShortDescField, 'LIKE', $searchTerm)
+                         ->orWhere($altLocationField, 'LIKE', $searchTerm);
+                }
+            });
         });
 
         return $query->latest()->limit(20)->get()->map(function($item) use ($language, $fullQuery) {
@@ -193,18 +268,46 @@ class SearchController extends Controller
     {
         $query = CentralBnp::where('status', 1);
         
-        $titleField = $language === 'bn' ? 'title_bn' : 'title_en';
-        $contentField = $language === 'bn' ? 'content_bn' : 'content_en';
-        $descField = $language === 'bn' ? 'short_description_bn' : 'short_description_en';
-
-        // Build search conditions
-        $query->where(function($q) use ($searchWords, $titleField, $contentField, $descField) {
-            foreach ($searchWords as $word) {
-                $searchTerm = '%' . $word . '%';
-                $q->orWhere($titleField, 'LIKE', $searchTerm)
-                  ->orWhere($contentField, 'LIKE', $searchTerm)
-                  ->orWhere($descField, 'LIKE', $searchTerm);
-            }
+        // Search in both languages for better results
+        $query->where(function($q) use ($searchWords, $fullQuery, $language) {
+            // Search in selected language fields
+            $q->where(function($langQ) use ($searchWords, $fullQuery, $language) {
+                $titleField = $language === 'bn' ? 'title_bn' : 'title_en';
+                $contentField = $language === 'bn' ? 'content_bn' : 'content_en';
+                $descField = $language === 'bn' ? 'short_description_bn' : 'short_description_en';
+                
+                // Full query match (highest priority)
+                $fullSearchTerm = '%' . $fullQuery . '%';
+                $langQ->where($titleField, 'LIKE', $fullSearchTerm)
+                      ->orWhere($contentField, 'LIKE', $fullSearchTerm)
+                      ->orWhere($descField, 'LIKE', $fullSearchTerm);
+                
+                // Individual word matches
+                foreach ($searchWords as $word) {
+                    $searchTerm = '%' . $word . '%';
+                    $langQ->orWhere($titleField, 'LIKE', $searchTerm)
+                          ->orWhere($contentField, 'LIKE', $searchTerm)
+                          ->orWhere($descField, 'LIKE', $searchTerm);
+                }
+            });
+            
+            // Also search in alternate language
+            $altTitleField = $language === 'bn' ? 'title_en' : 'title_bn';
+            $altContentField = $language === 'bn' ? 'content_en' : 'content_bn';
+            $altDescField = $language === 'bn' ? 'short_description_en' : 'short_description_bn';
+            
+            $q->orWhere(function($altQ) use ($searchWords, $fullQuery, $altTitleField, $altContentField, $altDescField) {
+                $altQ->where($altTitleField, 'LIKE', '%' . $fullQuery . '%')
+                     ->orWhere($altContentField, 'LIKE', '%' . $fullQuery . '%')
+                     ->orWhere($altDescField, 'LIKE', '%' . $fullQuery . '%');
+                
+                foreach ($searchWords as $word) {
+                    $searchTerm = '%' . $word . '%';
+                    $altQ->orWhere($altTitleField, 'LIKE', $searchTerm)
+                         ->orWhere($altContentField, 'LIKE', $searchTerm)
+                         ->orWhere($altDescField, 'LIKE', $searchTerm);
+                }
+            });
         });
 
         return $query->latest()->limit(20)->get()->map(function($item) use ($language, $fullQuery) {

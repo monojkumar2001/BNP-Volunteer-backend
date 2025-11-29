@@ -83,22 +83,6 @@ class OpinionController extends Controller
         // Clean and normalize phone number if provided
         if (!empty($validated['phone'])) {
             $normalizedPhone = $this->normalizePhone($validated['phone']);
-
-            // Check for duplicate phone number (check all possible formats)
-            $duplicate = Opinion::where(function($query) use ($normalizedPhone) {
-                $query->where('phone', $normalizedPhone)
-                      ->orWhere('phone', '+880' . substr($normalizedPhone, 1))
-                      ->orWhere('phone', '880' . substr($normalizedPhone, 1))
-                      ->orWhere('phone', substr($normalizedPhone, 1));
-            })->exists();
-
-            if ($duplicate) {
-                return response()->json([
-                    'message' => 'This phone number has already been registered.',
-                    'errors' => ['phone' => ['This phone number has already been used.']]
-                ], 422);
-            }
-
             // Save in normalized format
             $validated['phone'] = $normalizedPhone;
         }
