@@ -55,7 +55,7 @@
                                     <tr>
                                         <td><strong>Message</strong></td>
                                         <td>
-                                            <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; white-space: pre-wrap;">
+                                            <div >
                                                 {{ $contactUs->message ?? 'N/A' }}
                                             </div>
                                         </td>

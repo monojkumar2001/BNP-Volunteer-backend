@@ -55,7 +55,7 @@
                                                 $cat = $categories[$opinion->category] ?? null;
                                             @endphp
                                             @if($cat)
-                                                <span class="badge bg-info">
+                                                <span >
                                                     {{ $cat['bn'] }} / {{ $cat['en'] }}
                                                 </span>
                                             @else
@@ -74,7 +74,7 @@
                                     <tr>
                                         <td><strong>Message</strong></td>
                                         <td>
-                                            <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; white-space: pre-wrap;">
+                                            <div >
                                                 {{ $opinion->message }}
                                             </div>
                                         </td>

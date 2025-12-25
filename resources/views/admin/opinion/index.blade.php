@@ -56,7 +56,7 @@
                                                         '4' => 'Other Contact'
                                                     ];
                                                 @endphp
-                                                <span class="badge bg-info">
+                                                <span >
                                                     {{ $categories[$opinion->category] ?? $categoryLabels[$opinion->category] ?? 'N/A' }}
                                                 </span>
                                             </td>
