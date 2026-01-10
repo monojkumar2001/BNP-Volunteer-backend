@@ -73,7 +73,7 @@
 
                                     <tr>
                                         <td><strong>Message</strong></td>
-                                        <td>
+                                        <td class="text-wrap">
                                             <div >
                                                 {{ $opinion->message }}
                                             </div>
