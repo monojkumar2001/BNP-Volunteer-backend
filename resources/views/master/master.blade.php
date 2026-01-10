@@ -49,6 +49,7 @@
     @include('layouts.backend.js')
     <!-- End custom js for this page -->
     @yield('js')
+    @stack('scripts')
 
 </body>
 

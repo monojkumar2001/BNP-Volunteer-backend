@@ -8,6 +8,18 @@
                 <li class="breadcrumb-item"><a href="#">Opinion</a></li>
                 <li class="breadcrumb-item active" aria-current="page">All Opinions & Complaints</li>
             </ol>
+            <div class="d-flex gap-2">
+                <form id="selectedPdfForm" action="{{ route('admin.opinion.download-selected-pdf') }}" method="POST" class="d-inline">
+                    @csrf
+                    <input type="hidden" name="ids" id="selectedIds">
+                    <button type="submit" id="downloadSelectedBtn" class="btn btn-danger" disabled>
+                        <i data-feather="download"></i> Download Selected PDF
+                    </button>
+                </form>
+                <a href="{{ route('admin.opinion.export-excel') }}" class="btn btn-success">
+                    <i data-feather="file-text"></i> Export to Excel
+                </a>
+            </div>
         </nav>
 
         <div class="row">
@@ -20,6 +32,9 @@
                             <table id="dataTableExample" class="table">
                                 <thead>
                                     <tr>
+                                        <th style="width: 40px;">
+                                            <input type="checkbox" id="selectAll" title="Select All">
+                                        </th>
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Phone</th>
@@ -33,6 +48,9 @@
                                 <tbody>
                                     @foreach ($opinions as $key => $opinion)
                                         <tr>
+                                            <td>
+                                                <input type="checkbox" class="opinion-checkbox" value="{{ $opinion->id }}">
+                                            </td>
                                             <td>{{ $key + 1 }}</td>
 
                                             <td>
@@ -109,3 +127,69 @@
     </div>
 @endsection
 
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const checkboxes = document.querySelectorAll('.opinion-checkbox');
+        const downloadSelectedBtn = document.getElementById('downloadSelectedBtn');
+        const selectedIdsInput = document.getElementById('selectedIds');
+        const selectedPdfForm = document.getElementById('selectedPdfForm');
+
+        // Select all functionality
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateDownloadButton();
+            });
+        }
+
+        // Individual checkbox change
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateSelectAllState();
+                updateDownloadButton();
+            });
+        });
+
+        // Update select all checkbox state
+        function updateSelectAllState() {
+            if (selectAllCheckbox) {
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                const someChecked = Array.from(checkboxes).some(cb => cb.checked);
+                selectAllCheckbox.checked = allChecked;
+                selectAllCheckbox.indeterminate = someChecked && !allChecked;
+            }
+        }
+
+        // Update download button state
+        function updateDownloadButton() {
+            const selectedIds = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+            
+            if (selectedIds.length > 0) {
+                downloadSelectedBtn.disabled = false;
+                selectedIdsInput.value = JSON.stringify(selectedIds);
+            } else {
+                downloadSelectedBtn.disabled = true;
+                selectedIdsInput.value = '';
+            }
+        }
+
+        // Form submission
+        if (selectedPdfForm) {
+            selectedPdfForm.addEventListener('submit', function(e) {
+                const selectedIds = JSON.parse(selectedIdsInput.value || '[]');
+                if (selectedIds.length === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one opinion to download!');
+                    return false;
+                }
+            });
+        }
+    });
+</script>
+@endpush

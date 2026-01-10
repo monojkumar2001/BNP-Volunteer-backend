@@ -62,7 +62,13 @@ Route::namespace('App\Http\Controllers')->group(function () {
         Route::resource('galleryCategory', GalleryCategoryController::class);
         Route::resource('gallery', GalleryController::class);
         Route::resource('volunteer', VolunteerController::class);
+        
+        // Opinion specific routes (must be before resource route to avoid conflicts)
+        Route::get('opinion/export-excel', [OpinionController::class, 'exportExcel'])->name('opinion.export-excel');
+        Route::post('opinion/download-selected-pdf', [OpinionController::class, 'downloadSelectedPdf'])->name('opinion.download-selected-pdf');
+        Route::get('opinion/{id}/download-pdf', [OpinionController::class, 'downloadPdf'])->name('opinion.download-pdf');
         Route::resource('opinion', OpinionController::class);
+        
         Route::resource('contact_us', ContactUsController::class);
         Route::post('/upload-news-image', [NewsController::class, 'uploadImage'])
             ->name('news.upload.image');

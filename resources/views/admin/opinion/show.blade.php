@@ -100,6 +100,10 @@
                         </div>
 
                         <div class="mt-4 d-flex gap-2">
+                            <a href="{{ route('admin.opinion.download-pdf', $opinion->id) }}" class="btn btn-danger">
+                                <i data-feather="download"></i> Download PDF
+                            </a>
+
                             <form action="{{ route('admin.opinion.update', $opinion->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('PUT')
