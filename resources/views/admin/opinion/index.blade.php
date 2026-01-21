@@ -9,13 +9,13 @@
                 <li class="breadcrumb-item active" aria-current="page">All Opinions & Complaints</li>
             </ol>
             <div class="d-flex gap-2">
-                <form id="selectedPdfForm" action="{{ route('admin.opinion.download-selected-pdf') }}" method="POST" class="d-inline">
+                <!-- <form id="selectedPdfForm" action="{{ route('admin.opinion.download-selected-pdf') }}" method="POST" class="d-inline">
                     @csrf
                     <input type="hidden" name="ids" id="selectedIds">
                     <button type="submit" id="downloadSelectedBtn" class="btn btn-danger" disabled>
                         <i data-feather="download"></i> Download Selected PDF
                     </button>
-                </form>
+                </form> -->
                 <a href="{{ route('admin.opinion.export-excel') }}" class="btn btn-success">
                     <i data-feather="file-text"></i> Export to Excel
                 </a>
@@ -32,9 +32,9 @@
                             <table id="dataTableExample" class="table">
                                 <thead>
                                     <tr>
-                                        <th style="width: 40px;">
+                                        <!-- <th style="width: 40px;">
                                             <input type="checkbox" id="selectAll" title="Select All">
-                                        </th>
+                                        </th> -->
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Phone</th>
@@ -48,9 +48,9 @@
                                 <tbody>
                                     @foreach ($opinions as $key => $opinion)
                                         <tr>
-                                            <td>
+                                            <!-- <td>
                                                 <input type="checkbox" class="opinion-checkbox" value="{{ $opinion->id }}">
-                                            </td>
+                                            </td> -->
                                             <td>{{ $key + 1 }}</td>
 
                                             <td>
